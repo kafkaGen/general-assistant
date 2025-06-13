@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.general_assistant.api.routes import chat, health
-from src.general_assistant.config.logger import create_logger
+from src.general_assistant.config.logger import create_logger, loguru_logger
 from src.general_assistant.config.settings import settings
 from src.general_assistant.core.workflow import GeneralAssistantWorkflow
 
@@ -25,7 +25,11 @@ async def lifespan(app: FastAPI):
     yield
 
     # --- Shutdown Logic ---
+
     logger.info(f"Shutting down {settings.api.api_name}...")
+
+    # remove all loguru handlers
+    loguru_logger.remove()
 
 
 def create_app() -> FastAPI:

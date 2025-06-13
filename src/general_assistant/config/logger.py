@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from loguru import logger
+from loguru import logger as loguru_logger
 
 
 def create_logger(
@@ -36,13 +36,13 @@ def create_logger(
 
     # Remove root handlers
     try:
-        logger.remove(0)
+        loguru_logger.remove(0)
     except ValueError:
         # root handler is already removed
         pass
 
     # Create a new logger instance
-    new_logger = logger.bind(name=logger_name)
+    new_logger = loguru_logger.bind(name=logger_name)
 
     # Add console handler
     new_logger.add(
@@ -74,7 +74,7 @@ def create_logger(
         rotation=rotation_size,
         retention=retention_count,
         compression=compression,
-        enqueue=True,  # Thread-safe logging
+        enqueue=False,  # Thread-safe logging
         backtrace=True,  # Better error tracing
         diagnose=True,  # Detailed error information
         filter=lambda record: record["extra"].get("name") == logger_name,

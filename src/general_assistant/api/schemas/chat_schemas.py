@@ -90,3 +90,10 @@ class AssistantChatOutput(BaseModel):
     """Output schema for assistant chat responses."""
 
     assistant_message: str = Field(..., description="The assistant's response message")
+
+    @field_validator("assistant_message")
+    @classmethod
+    def assistant_message_must_not_be_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("Assistant message cannot be empty or whitespace only")
+        return v.strip()

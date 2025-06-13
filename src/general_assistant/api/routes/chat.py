@@ -143,7 +143,7 @@ async def create_chat_completion(
     status_code=status.HTTP_200_OK,
 )
 async def send_simple_message(
-    chat_input: SimpleAssistantChatInput,
+    simple_message: SimpleAssistantChatInput,
     workflow: GeneralAssistantWorkflow = Depends(get_workflow),
 ) -> AssistantChatOutput:
     """
@@ -157,7 +157,7 @@ async def send_simple_message(
     """
     chat_input = AssistantChatInput(
         conversation_history=[
-            ChatMessageSchema(role="user", content=chat_input.message)
+            ChatMessageSchema(role="user", content=simple_message.message)
         ]
     )
 
