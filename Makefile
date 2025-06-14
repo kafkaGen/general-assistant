@@ -34,12 +34,12 @@ update-venv:
 
 run-assistant:
 	@echo "Starting the assistant API server..."
-	fastapi dev src/general_assistant/api/app.py
+	uv run fastapi dev src/general_assistant/api/app.py
 
 run-webui:
 	@echo "Starting the assistant Web UI server..."
-	chainlit run src/webui/chainlit_main.py -h --no-cache --port 8080
+	uv run chainlit run src/webui/chainlit_main.py -h --no-cache --port 8080
 
 download-dataset:
 	@echo "Downloading the dataset..."
-	python scripts/download_gaia_dataset.py
+	uv run python scripts/download_gaia_dataset.py

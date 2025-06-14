@@ -85,6 +85,14 @@ class AssistantChatInput(BaseModel):
 class SimpleAssistantChatInput(BaseModel):
     message: str = Field(..., description="The user's message")
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "message": "Hello, how can you help me today?",
+            },
+        }
+    )
+
 
 class AssistantChatOutput(BaseModel):
     """Output schema for assistant chat responses."""

@@ -218,13 +218,15 @@ class AssistantClient:
             response = self._core_sync_chat_request(chat_input)
         except Exception as err:
             response = self._handle_chat_request_error(err)
-
-        conversation_history.extend(
-            [
-                ChatMessageSchema(role="user", content=user_message),
-                ChatMessageSchema(role="assistant", content=response.assistant_message),
-            ]
-        )
+        else:
+            conversation_history.extend(
+                [
+                    ChatMessageSchema(role="user", content=user_message),
+                    ChatMessageSchema(
+                        role="assistant", content=response.assistant_message
+                    ),
+                ]
+            )
 
         return response, conversation_history
 
@@ -286,13 +288,15 @@ class AssistantClient:
             response = await self._core_async_chat_request(chat_input)
         except Exception as err:
             response = self._handle_chat_request_error(err)
-
-        conversation_history.extend(
-            [
-                ChatMessageSchema(role="user", content=user_message),
-                ChatMessageSchema(role="assistant", content=response.assistant_message),
-            ]
-        )
+        else:
+            conversation_history.extend(
+                [
+                    ChatMessageSchema(role="user", content=user_message),
+                    ChatMessageSchema(
+                        role="assistant", content=response.assistant_message
+                    ),
+                ]
+            )
 
         return response, conversation_history
 
