@@ -1,6 +1,8 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+### GENERAL SETTINGS ###
+
 
 class ApiSettings(BaseSettings):
     """
@@ -66,6 +68,100 @@ class AssistantClientSettings(BaseSettings):
     )
 
 
+### MODELS SETTINGS ###
+
+
+class GeneralAgentModelSettings(BaseSettings):
+    """
+    General agent model settings, loaded from environment variables and .env files.
+    """
+
+    provider: str = Field(
+        # "anthropic",
+        "openai",
+        description="The provider of the model.",
+        alias="GENERAL_AGENT_MODEL_PROVIDER",
+    )
+    model_name: str = Field(
+        # "claude-3-5-sonnet-latest",
+        "gpt-4o-mini",
+        description="The name of the model.",
+        alias="GENERAL_AGENT_MODEL_NAME",
+    )
+    temperature: float = Field(
+        0.3,
+        description="The temperature of the model.",
+        alias="GENERAL_AGENT_MODEL_TEMPERATURE",
+    )
+    max_tokens: int = Field(
+        2048,
+        description="The maximum number of tokens to generate.",
+        alias="GENERAL_AGENT_MODEL_MAX_TOKENS",
+    )
+    prompt_id: str = Field(
+        "general-agent",
+        description="The ID of the general agent prompt.",
+        alias="GENERAL_AGENT_PROMPT_ID",
+    )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+
+class ModelsSettings(BaseSettings):
+    """
+    Models settings, loaded from environment variables and .env files.
+    """
+
+    general_agent: GeneralAgentModelSettings = GeneralAgentModelSettings()
+
+
+### TOOLS SETTINGS ###
+
+
+class WebSearchToolSettings(BaseSettings):
+    """
+    Web search tool settings, loaded from environment variables and .env files.
+    """
+
+    api_key: str = Field(
+        ..., description="The API key for the web search tool.", alias="TAVILY_API_KEY"
+    )
+    max_results: int = Field(2, description="Maximum number of search results.")
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+
+class ToolsSettings(BaseSettings):
+    """
+    Tools settings, loaded from environment variables and .env files.
+    """
+
+    web_search_tool: WebSearchToolSettings = WebSearchToolSettings()
+
+
+### WORKFLOWS SETTINGS ###
+
+
+class WorkflowsSettings(BaseSettings):
+    """
+    Workflows settings, loaded from environment variables and .env files.
+    """
+
+    models: ModelsSettings = ModelsSettings()
+    tools: ToolsSettings = ToolsSettings()
+
+
+### AGGREGATOR SETTINGS ###
+
+
 class AppSettings(BaseSettings):
     """
     The main application settings, which composes all component-specific settings.
@@ -74,12 +170,7 @@ class AppSettings(BaseSettings):
     api: ApiSettings = ApiSettings()
     webui: WebUISettings = WebUISettings()
     assistant_client: AssistantClientSettings = AssistantClientSettings()
-
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-    )
+    workflows: WorkflowsSettings = WorkflowsSettings()
 
 
 settings = AppSettings()

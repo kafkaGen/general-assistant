@@ -2,6 +2,7 @@
 data/
 logs/
 temp/
+.langgraph_api/
 .files
 
 # Byte-compiled / optimized / DLL files

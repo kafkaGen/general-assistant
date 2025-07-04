@@ -1,20 +1,26 @@
+import json
 from typing import Literal
 
-from llama_index.core.base.llms.types import ChatMessage
+from langchain_core.messages import (
+    AIMessage,
+    AnyMessage,
+    HumanMessage,
+    ToolMessage,
+)
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-class ChatMessageSchema(BaseModel):
-    role: Literal["user", "assistant", "system"] = Field(
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant", "tool"] = Field(
         ...,
         description="The role of the message sender",
     )
     content: str = Field(
         ...,
         min_length=1,
-        max_length=10000,
         description="The content of the message",
     )
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -31,23 +37,53 @@ class ChatMessageSchema(BaseModel):
             raise ValueError("Content cannot be empty or whitespace only")
         return v.strip()
 
-    def to_llama_index_message(self) -> ChatMessage:
-        """Convert to LlamaIndex ChatMessage format."""
-        return ChatMessage(role=self.role, content=self.content)
+    def to_langchain_message(self) -> AnyMessage:
+        if self.role == "user":
+            return HumanMessage(content=self.content)
+        elif self.role == "assistant":
+            return AIMessage(content=self.content)
+        elif self.role == "tool":
+            return ToolMessage(content=self.content)
+        else:
+            raise ValueError(f"Invalid role: {self.role}")
+
+    @classmethod
+    def from_langchain_message(cls, message: AnyMessage) -> "ChatMessage":
+        if isinstance(message, HumanMessage):
+            return cls(role="user", content=message.content)
+        elif isinstance(message, AIMessage):
+            content = (message.content + "\n\n").strip()
+            if message.tool_calls:
+                tool_calls = [
+                    f"{tool_call['name']}\n\n{json.dumps(tool_call['args'], indent=4)}"
+                    for tool_call in message.tool_calls
+                ]
+                content += "\n\n".join(tool_calls)
+            return cls(role="assistant", content=content)
+        elif isinstance(message, ToolMessage):
+            content = message.content
+            try:
+                if content[0] == "{" and content[-1] == "}":
+                    content = json.dumps(json.loads(content), indent=4)
+            except json.JSONDecodeError:
+                pass
+            return cls(role="tool", content=content)
+        else:
+            raise ValueError(f"Invalid message type: {type(message)}")
 
 
-class AssistantChatInput(BaseModel):
-    """Input schema for assistant chat requests."""
+class ChatInput(BaseModel):
+    """Input schema for chat requests."""
 
-    conversation_history: list[ChatMessageSchema] = Field(
+    messages: list[ChatMessage] = Field(
         default_factory=list,
-        max_items=100,  # Prevent extremely long conversations
-        description="The conversation history including the current user message",
+        description="The messages in the conversation",
     )
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "conversation_history": [
+                "messages": [
                     {
                         "role": "user",
                         "content": "Hello, how can you help me today?",
@@ -57,51 +93,38 @@ class AssistantChatInput(BaseModel):
         }
     )
 
-    @field_validator("conversation_history")
-    def validate_conversation_history(
-        cls, v: list[ChatMessageSchema]
-    ) -> list[ChatMessageSchema]:
+    @field_validator("messages")
+    @classmethod
+    def validate_messages(cls, v: list[ChatMessage]) -> list[ChatMessage]:
         if not v:
-            raise ValueError("Conversation history cannot be empty")
+            raise ValueError("Messages cannot be empty")
 
-        # Ensure last message is from user
-        if v[-1].role != "user":
-            raise ValueError("Last message must be from user")
+        if len(v) > 100:
+            raise ValueError("Messages cannot be longer than 100 messages")
 
         return v
 
-    def get_llama_index_messages(self) -> list[ChatMessage]:
-        """Convert to LlamaIndex ChatMessage format."""
-        return [msg.to_llama_index_message() for msg in self.conversation_history]
-
-    def get_current_user_message(self) -> str:
-        """Get the latest user message."""
-        for msg in reversed(self.conversation_history):
-            if msg.role == "user":
-                return msg.content
-        raise ValueError("No user message found in conversation history")
+    def to_langchain_messages(self) -> list[AnyMessage]:
+        return [msg.to_langchain_message() for msg in self.messages]
 
 
-class SimpleAssistantChatInput(BaseModel):
-    message: str = Field(..., description="The user's message")
+class ChatInvokeOutput(BaseModel):
+    """Output schema for chat responses."""
 
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "message": "Hello, how can you help me today?",
-            },
-        }
+    messages: list[ChatMessage] = Field(
+        ..., description="The messages from the assistant"
     )
 
-
-class AssistantChatOutput(BaseModel):
-    """Output schema for assistant chat responses."""
-
-    assistant_message: str = Field(..., description="The assistant's response message")
-
-    @field_validator("assistant_message")
+    @field_validator("messages")
     @classmethod
-    def assistant_message_must_not_be_empty(cls, v: str) -> str:
-        if not v.strip():
-            raise ValueError("Assistant message cannot be empty or whitespace only")
-        return v.strip()
+    def validate_messages(cls, v: list[ChatMessage]) -> list[ChatMessage]:
+        if not v:
+            raise ValueError("Messages cannot be empty")
+
+        return v
+
+    @classmethod
+    def from_langchain_messages(cls, messages: list[AnyMessage]) -> "ChatInvokeOutput":
+        return cls(
+            messages=[ChatMessage.from_langchain_message(msg) for msg in messages]
+        )

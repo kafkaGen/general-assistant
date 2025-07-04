@@ -1,0 +1,7 @@
+{
+  "dependencies": ["./src/general_assistant"],
+  "graphs": {
+    "agent": "./src/general_assistant/utils/langgraph_studio.py:graph"
+  },
+  "env": ".env"
+}

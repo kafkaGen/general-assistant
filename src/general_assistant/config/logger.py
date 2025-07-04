@@ -4,6 +4,34 @@ from pathlib import Path
 from loguru import logger as loguru_logger
 
 
+def format_console_record(record):
+    base = (
+        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+        "<level>{level:<8}</level> | "
+        "<cyan>{extra[name]}</cyan> | "
+        "<level>{message}</level>"
+    )
+    extras = [f"{v}" for k, v in record["extra"].items() if k != "name"]
+    if extras:
+        base += " | <magenta>" + " | ".join(extras) + "</magenta>"
+    base += "\n"
+    return base
+
+
+def format_file_record(record):
+    base = (
+        "{time:YYYY-MM-DD HH:mm:ss} | "
+        "{level:<8} | "
+        "{extra[name]} | "
+        "{function}:{line} | "
+        "{message}"
+    )
+    extras = [f"{v}" for k, v in record["extra"].items() if k != "name"]
+    if extras:
+        base += " | " + " | ".join(extras)
+    return base
+
+
 def create_logger(
     logger_name: str,
     console_level: str = "INFO",
@@ -48,13 +76,7 @@ def create_logger(
     new_logger.add(
         sink=lambda msg: print(msg, end=""),
         level=console_level,
-        format=(
-            "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
-            "<level>{level: <8}</level> | "
-            "<cyan>{extra[name]}</cyan> | "
-            "<level>{message}</level> | "
-            "<magenta>{extra}</magenta>"
-        ),
+        format=format_console_record,
         colorize=True,
         filter=lambda record: record["extra"].get("name") == logger_name,
     )
@@ -63,14 +85,7 @@ def create_logger(
     new_logger.add(
         sink=str(log_filepath),
         level=file_level,
-        format=(
-            "{time:YYYY-MM-DD HH:mm:ss} | "
-            "{level: <8} | "
-            "{extra[name]} | "
-            "{function}:{line} | "
-            "{message} | "
-            "{extra}"
-        ),
+        format=format_file_record,
         rotation=rotation_size,
         retention=retention_count,
         compression=compression,

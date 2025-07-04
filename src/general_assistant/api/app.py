@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.general_assistant.api.routes import chat, health
 from src.general_assistant.config.logger import create_logger, loguru_logger
 from src.general_assistant.config.settings import settings
-from src.general_assistant.core.workflow import GeneralAssistantWorkflow
+from src.general_assistant.core.workflows import GeneralAssistantWorkflow
 
 
 @asynccontextmanager
@@ -17,8 +17,10 @@ async def lifespan(app: FastAPI):
 
     logger = create_logger("application", settings.api.log_level)
 
-    workflow_instance = GeneralAssistantWorkflow()
-    app.state.workflow = workflow_instance
+    general_assistant_workflow = GeneralAssistantWorkflow(
+        settings=settings.workflows,
+    )
+    app.state.general_assistant_workflow = general_assistant_workflow
 
     logger.info(f"Starting up {settings.api.api_name} {settings.api.api_version}...")
 
@@ -36,6 +38,7 @@ def create_app() -> FastAPI:
     """
     Application factory to create and configure the FastAPI application.
     """
+
     app = FastAPI(
         title=settings.api.api_name,
         description=settings.api.api_description,

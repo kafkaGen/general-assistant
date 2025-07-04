@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from src.general_assistant.api.schemas.health_schemas import HealthCheckResponse
 from src.general_assistant.config.logger import create_logger
 from src.general_assistant.config.settings import settings
-from src.general_assistant.core.workflow import GeneralAssistantWorkflow
+from src.general_assistant.core.workflows import GeneralAssistantWorkflow
 
 logger = create_logger("health_api", settings.api.log_level)
 
@@ -44,7 +44,7 @@ async def get_api_health() -> HealthCheckResponse:
         #    successfully (meaning class-level dependencies like the LLM
         #    provider were initialized without error).
         # 2. An instance can be created (its __init__ logic is sound).
-        _ = GeneralAssistantWorkflow()
+        _ = GeneralAssistantWorkflow(settings=settings.workflows)
         component_checks["workflow_initialization"] = {"status": "healthy"}
     except Exception as e:
         error_message = f"Workflow initialization failed: {type(e).__name__} - {str(e)}"

@@ -10,11 +10,21 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "chainlit>=2.5.5",
     "datasets>=3.6.0",
+    "debugpy>=1.8.14",
     "fastapi[standard]>=0.115.12",
     "httpx>=0.28.1",
     "huggingface-hub>=0.24.1",
-    "llama-index-llms-anthropic>=0.7.2",
+    "langchain>=0.3.26",
+    "langchain-anthropic>=0.3.16",
+    "langchain-openai>=0.3.27",
+    "langgraph>=0.5.0",
+    "langgraph-cli[inmem]>=0.3.3",
+    "langsmith>=0.4.4",
     "loguru>=0.7.3",
+    "numpy>=2.3.0",
+    "openinference-instrumentation-llama-index>=4.3.1",
+    "pandas>=2.3.0",
+    "tavily-python>=0.7.8",
 ]
 
 [project.optional-dependencies]

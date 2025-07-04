@@ -75,10 +75,10 @@ class WebSearchTool:
                 description=str(self.search_web.__doc__),
                 coroutine=self.search_web,
             ),
-            Tool.from_function(
-                func=self.fetch_webpage_text,
-                name=self.fetch_webpage_text.__name__,
-                description=str(self.fetch_webpage_text.__doc__),
-                coroutine=self.fetch_webpage_text,
-            ),
+            # Tool.from_function(
+            #     func=self.fetch_webpage_text,
+            #     name=self.fetch_webpage_text.__name__,
+            #     description=str(self.fetch_webpage_text.__doc__),
+            #     coroutine=self.fetch_webpage_text,
+            # ),
         ]

@@ -1,3 +1,43 @@
+# Project Status
+
+## TO DO
+
+- [x] Download GAIA dataset
+- [x] Create Chat Endpoint
+- [x] Create Chainlit Interface with chat history
+- [x] update the Chainlit .md file
+- [x] update the Chainlit to send the history of the chat with endpoint
+- [x] code overview the api folder fully, make as good as possible
+- [x] make the config folder as good as possible for usage
+- [x] double check chainlit file is okay
+- [x] refactor the AssistantClient
+- [x] git push commit with webui updates
+- [x] douple check all other code changes (uv, precommits)
+- [x] add simple README.md
+- [x] develop Agent Workflow with web search tool
+- [x] add for agent two tools - search the web and Python interprenter (Calculator)
+
+- [ ] In WebUI i want to see chat as user input, agent final output and hidden (or not) intermediate results with expand tools output
+- [ ] I want my endpoints output the structure with list of new messages
+- [ ] I want to stream messages to the WebUI (separate endpoints for stream and not stream)
+- [ ] refactor endpoint inputs and outputs models
+- [x] I want to observe graph with langgraph studio
+- [x] I want to manage all prompts with langsmith
+- [x] I want to configure GeneralWorkflow, Tools and AgentFactory with global Settings
+- [x] I want to redo my Workflow to async and tools also
+
+- [ ] fetch page tool can fetch to long page that blow the context window
+
+- [ ] get back to ShortTerm memory implementation issue
+- [ ] after come back to chat endpoint to improve the error handling from workflow and its output
+- [ ] create postgress db with docker compose and add checkpoint to that to the agent (think how to visualize this also on web ui)
+- [ ] add long term memory support to agent (add fact, delete fact, retrieve/ search fact)
+- [ ] add promper short term memory support (some summarization after k messages)
+- [ ] add meta learning (somehow auto update the prompt, tools description, etc., in reflection stage add some meaningful conclusion to long term memory on beter task completion)
+- [ ] long term memory possible category: user facts, task/ workflow insights, general insights of agent about itself and world
+
+- [ ] add guardrails to input and output of agent
+
 # Tree
 
 ``` markdown
