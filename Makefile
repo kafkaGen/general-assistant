@@ -1,6 +1,6 @@
 # Makefile for the General Assistant project
 
-.PHONY: help setup-venv sync-venv update-venv run-assistant run-webui download-dataset
+.PHONY: help setup-venv sync-venv update-venv run-assistant run-webui download-dataset run-docker-compose stop-docker-compose
 
 # Set default goal to 'help'
 .DEFAULT_GOAL := help
@@ -14,6 +14,8 @@ help:
 	@echo "  make run-assistant         - Run the assistant API server"
 	@echo "  make run-webui             - Run the assistant Web UI server"
 	@echo "  make run-langgraph-studio  - Run the LangGraph Studio server"
+	@echo "  make run-docker-compose    - Run the Docker Compose services"
+	@echo "  make stop-docker-compose   - Stop the Docker Compose services"
 
 setup-venv:
 	@echo "Setting up development environment..."
@@ -43,8 +45,16 @@ run-assistant:
 
 run-webui:
 	@echo "Starting the assistant Web UI server..."
-	uv run chainlit run src/webui/chainlit_main.py -h --no-cache --port 8080
+	uv run chainlit run src/webui/chainlit_main.py -h --no-cache --port 8080 -w
 
 run-langgraph-studio:
 	@echo "Starting the LangGraph Studio server..."
-	uv run langgraph dev --config config/langgraph_studio.json --port 5677 --debug-port 5678
+	uv run langgraph dev --config scripts/langgraph_studio.json --port 5677 --debug-port 5678
+
+run-docker-compose:
+	@echo "Starting the Docker Compose services..."
+	docker compose --env-file .env -f deployment/docker/docker-compose.yaml -p general-assistant up --build -d
+
+stop-docker-compose:
+	@echo "Stopping the Docker Compose services..."
+	docker compose -p general-assistant down

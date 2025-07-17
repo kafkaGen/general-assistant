@@ -1,0 +1,14 @@
+services:
+  webui:
+    build:
+      context: ../../
+      dockerfile: ./deployment/docker/images/webui.Dockerfile
+    image: webui
+    container_name: webui_container
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    ports:
+      - ${WEBUI_PORT}:8080
+    environment:
+      - ASSISTANT_BASE_URL=http://host.docker.internal:${ASSISTANT_PORT}

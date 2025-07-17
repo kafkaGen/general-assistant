@@ -17,16 +17,25 @@
 - [x] develop Agent Workflow with web search tool
 - [x] add for agent two tools - search the web and Python interprenter (Calculator)
 
-- [ ] In WebUI i want to see chat as user input, agent final output and hidden (or not) intermediate results with expand tools output
-- [ ] I want my endpoints output the structure with list of new messages
-- [ ] I want to stream messages to the WebUI (separate endpoints for stream and not stream)
-- [ ] refactor endpoint inputs and outputs models
+- [x] In WebUI i want to see chat as user input, agent final output and hidden (or not) intermediate results with expand tools output
+    - [x] update chainlit to hide intermediat state, pretty print of jsons (showing intermediat step during streaming)
+    - [x] issue with double response
+    - [x] error on continued dialog
+    - [x] deploy with docker and left
+- [x] I want my endpoints output the structure with list of new messages
+- [x] I want to stream messages to the WebUI (separate endpoints for stream and not stream)
+- [x] refactor endpoint inputs and outputs models
 - [x] I want to observe graph with langgraph studio
 - [x] I want to manage all prompts with langsmith
 - [x] I want to configure GeneralWorkflow, Tools and AgentFactory with global Settings
 - [x] I want to redo my Workflow to async and tools also
 
+- [ ] create the evaluation pipeline with metrics and DeepEval (any better alternatives?) on task level 1
+- [ ] finish course on the langsmith to unialize it during evaluaiton
+- [ ] potentialy create onw ReAct like agent, do not use prebuild
 - [ ] fetch page tool can fetch to long page that blow the context window
+- [ ] create tool to get current date or paste it with prompt
+- [ ] use githup assistant for pr code review
 
 - [ ] get back to ShortTerm memory implementation issue
 - [ ] after come back to chat endpoint to improve the error handling from workflow and its output

@@ -55,6 +55,8 @@ class GeneralAssistantWorkflow:
         )
 
         async for _, node_event in stream_response:
-            for node_event_value in node_event.values():
-                for message in node_event_value.get("messages", []):
+            for node_name, node_output in node_event.items():
+                if node_name == "general_agent":
+                    continue
+                for message in node_output.get("messages", []):
                     yield message

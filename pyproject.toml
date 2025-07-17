@@ -1,7 +1,7 @@
 [project]
 name = "general-assistant"
 version = "0.1.0"
-description = "A general-purpose AI assistant built with FastAPI and LlamaIndex."
+description = "A general-purpose AI assistant."
 authors = [
     {name = "Oleh Borysevych", email = "borysevych.oleh87@gmail.com"},
 ]
@@ -22,7 +22,6 @@ dependencies = [
     "langsmith>=0.4.4",
     "loguru>=0.7.3",
     "numpy>=2.3.0",
-    "openinference-instrumentation-llama-index>=4.3.1",
     "pandas>=2.3.0",
     "tavily-python>=0.7.8",
 ]

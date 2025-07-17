@@ -39,9 +39,13 @@ class WebUISettings(BaseSettings):
         "http://127.0.0.1:8000",
         description="The base URL of the assistant service.",
     )
-    assistant_chat_endpoint: str = Field(
-        "/v0.1.0/chat/chat_completions",
-        description="The chat endpoint path.",
+    assistant_chat_invoke_endpoint: str = Field(
+        "/v0.1.0/chat/chat_invoke",
+        description="The chat invoke endpoint path.",
+    )
+    assistant_chat_stream_endpoint: str = Field(
+        "/v0.1.0/chat/chat_stream",
+        description="The chat stream endpoint path.",
     )
 
     model_config = SettingsConfigDict(

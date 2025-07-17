@@ -64,14 +64,14 @@ async def chat_invoke(
         logger.error(
             f"Unexpected error processing chat request: {str(e)}",
             error_type=error_type,
-            messages=chat_input.model_dump()["messages"],
             exc_info=True,
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=(
                 "An unexpected internal error occurred while processing your request. "
-                f"Type: {error_type}. Please try again later or contact support."
+                f"Type: {error_type}, details: {str(e)}. Please try again later or "
+                "contact support."
             ),
         ) from e
 
@@ -104,7 +104,8 @@ async def chat_stream(
                     error_msg = ChatMessage(
                         role="assistant",
                         content=(
-                            f"[Error processing message: {type(msg_error).__name__}]"
+                            f"[Error processing message: {type(msg_error).__name__}, "
+                            f"details: {str(msg_error)}]"
                         ),
                     )
                     yield f"{error_msg.model_dump()}\n"
@@ -121,8 +122,8 @@ async def chat_stream(
                 role="assistant",
                 content=(
                     f"An error occurred while processing your request. "
-                    f"Type: {error_type}. Please try again later or contact support "
-                    "if the issue persists."
+                    f"Type: {error_type}, details: {str(workflow_error)}. Please try "
+                    "again later or contact support if the issue persists."
                 ),
             )
             yield f"{error_msg.model_dump()}\n"
@@ -147,14 +148,13 @@ async def chat_stream(
         logger.error(
             f"Unexpected error in streaming chat request: {str(e)}",
             error_type=error_type,
-            messages=chat_input.model_dump()["messages"],
             exc_info=True,
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=(
                 "An unexpected internal error occurred while setting up your streaming "
-                f"request. Type: {error_type}. Please try again later or contact "
-                "support."
+                f"request. Type: {error_type}, details: {str(e)}. Please try again "
+                "later or contact support."
             ),
         ) from e

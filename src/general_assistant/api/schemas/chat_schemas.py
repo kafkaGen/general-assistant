@@ -1,5 +1,5 @@
 import json
-from typing import Literal
+from typing import Any, Literal
 
 from langchain_core.messages import (
     AIMessage,
@@ -19,6 +19,10 @@ class ChatMessage(BaseModel):
         ...,
         min_length=1,
         description="The content of the message",
+    )
+    additional_kwargs: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Additional kwargs of the message",
     )
 
     model_config = ConfigDict(
@@ -41,9 +45,15 @@ class ChatMessage(BaseModel):
         if self.role == "user":
             return HumanMessage(content=self.content)
         elif self.role == "assistant":
-            return AIMessage(content=self.content)
+            return AIMessage(
+                content=self.content,
+                **self.additional_kwargs,
+            )
         elif self.role == "tool":
-            return ToolMessage(content=self.content)
+            return ToolMessage(
+                content=self.content,
+                **self.additional_kwargs,
+            )
         else:
             raise ValueError(f"Invalid role: {self.role}")
 
@@ -53,13 +63,21 @@ class ChatMessage(BaseModel):
             return cls(role="user", content=message.content)
         elif isinstance(message, AIMessage):
             content = (message.content + "\n\n").strip()
+            additional_kwargs = {}
             if message.tool_calls:
                 tool_calls = [
                     f"{tool_call['name']}\n\n{json.dumps(tool_call['args'], indent=4)}"
                     for tool_call in message.tool_calls
                 ]
                 content += "\n\n".join(tool_calls)
-            return cls(role="assistant", content=content)
+                additional_kwargs = {
+                    "tool_calls": message.tool_calls,
+                }
+            return cls(
+                role="assistant",
+                content=content,
+                additional_kwargs=additional_kwargs,
+            )
         elif isinstance(message, ToolMessage):
             content = message.content
             try:
@@ -67,7 +85,14 @@ class ChatMessage(BaseModel):
                     content = json.dumps(json.loads(content), indent=4)
             except json.JSONDecodeError:
                 pass
-            return cls(role="tool", content=content)
+            return cls(
+                role="tool",
+                content=content,
+                additional_kwargs={
+                    "tool_call_id": message.tool_call_id,
+                    "name": message.name,
+                },
+            )
         else:
             raise ValueError(f"Invalid message type: {type(message)}")
 
