@@ -108,7 +108,7 @@ async def chat_stream(
                             f"details: {str(msg_error)}]"
                         ),
                     )
-                    yield f"{error_msg.model_dump()}\n"
+                    yield f"{error_msg.model_dump_json()}\n"
 
         except Exception as workflow_error:
             error_type = type(workflow_error).__name__
@@ -126,7 +126,7 @@ async def chat_stream(
                     "again later or contact support if the issue persists."
                 ),
             )
-            yield f"{error_msg.model_dump()}\n"
+            yield f"{error_msg.model_dump_json()}\n"
 
     try:
         messages = chat_input.to_langchain_messages()
