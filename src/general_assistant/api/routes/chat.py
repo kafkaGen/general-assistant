@@ -95,7 +95,7 @@ async def chat_stream(
             async for message in workflow.stream(messages=messages):
                 try:
                     msg = ChatMessage.from_langchain_message(message)
-                    yield f"{msg.model_dump()}\n"
+                    yield f"{msg.model_dump_json()}\n"
                 except Exception as msg_error:
                     logger.warning(
                         f"Error processing message in stream: {str(msg_error)}",

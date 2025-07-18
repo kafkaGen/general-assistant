@@ -38,7 +38,7 @@ async def create_user_message(message: cl.Message) -> tuple[ChatMessage | None, 
     return user_message, is_error
 
 
-async def plot_step(message: ChatMessage):
+async def _display_step(message: ChatMessage):
     step_name = message.role
     if message.role == "tool":
         step_name += " " + message.additional_kwargs.get("name", "")
@@ -62,7 +62,7 @@ async def main(message: cl.Message):
         async for response_message in client.async_stream_chat(
             conversation_history=conversation_history,
         ):
-            await plot_step(response_message)
+            await _display_step(response_message)
             final_message = response_message
             conversation_history.append(response_message)
 

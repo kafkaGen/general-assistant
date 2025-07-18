@@ -35,7 +35,8 @@
 - [ ] potentialy create onw ReAct like agent, do not use prebuild
 - [ ] fetch page tool can fetch to long page that blow the context window
 - [ ] create tool to get current date or paste it with prompt
-- [ ] use githup assistant for pr code review
+- [x] use githup assistant for pr code review
+- [x] fix review comments from copilot in pr
 
 - [ ] get back to ShortTerm memory implementation issue
 - [ ] after come back to chat endpoint to improve the error handling from workflow and its output

@@ -1,4 +1,3 @@
-import ast
 import asyncio
 import json
 from collections.abc import AsyncGenerator, Generator
@@ -81,13 +80,16 @@ class AssistantClient:
             stream_endpoint: Chat stream endpoint path
             timeout: Request timeout in seconds
         """
-        self.invoke_url = f"{base_url.rstrip('/')}/{invoke_endpoint.strip('/')}"
-        self.stream_url = f"{base_url.rstrip('/')}/{stream_endpoint.strip('/')}"
+        self.invoke_url = self._prepare_url(base_url, invoke_endpoint)
+        self.stream_url = self._prepare_url(base_url, stream_endpoint)
         self.timeout = timeout
 
         # HTTP clients (will be initialized in context managers)
         self._sync_client: httpx.Client | None = None
         self._async_client: httpx.AsyncClient | None = None
+
+    def _prepare_url(self, base_url: str, endpoint: str) -> str:
+        return f"{base_url.rstrip('/')}/{endpoint.strip('/')}"
 
     def __enter__(self) -> "AssistantClient":
         """Enter sync context manager - initialize sync HTTP client."""
@@ -224,8 +226,14 @@ class AssistantClient:
 
             try:
                 data = json.loads(chunk)
-            except json.JSONDecodeError:
-                data = ast.literal_eval(chunk)
+            except json.JSONDecodeError as err:
+                self.logger.warning(
+                    f"Failed to decode JSON chunk '{chunk[:100]}...': {err}"
+                )
+                return ChatMessage(
+                    role="assistant",
+                    content=f"[ERROR: Invalid JSON format: {err}] | {chunk}",
+                )
 
             return ChatMessage.model_validate(data)
 
