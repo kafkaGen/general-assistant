@@ -30,21 +30,57 @@
 - [x] I want to configure GeneralWorkflow, Tools and AgentFactory with global Settings
 - [x] I want to redo my Workflow to async and tools also
 
-- [ ] create the evaluation pipeline with metrics and DeepEval (any better alternatives?) on task level 1
-- [ ] finish course on the langsmith to unialize it during evaluaiton
-- [ ] potentialy create onw ReAct like agent, do not use prebuild
-- [ ] fetch page tool can fetch to long page that blow the context window
-- [ ] create tool to get current date or paste it with prompt
+- [x] restructed the src folder to make more modular and code-shareble
+- [x] defined the logic of flexible configuration with BaseNamedSettings
+- [x] add streaming support to the general assistant
+- [x] update the api to proper call and process output from general assistant (invoke and stream)
+- [x] create separate module 'models' with all data models and fill it
+- [x] define proper settings from evaluators and api, assistant_client
+- [x] update webui to receive new streaming from custom react assistant
+- [x] check if assistant_client work correct
+- [x] improve the tools, make them return the proper formatted string
+- [x] create the dataset in langsmith with level 1 without files
+- [x] update evaluators to not use the api but graph directly
+- [x] create the set of evaluators (and summary evaluators) for current dataset
+- [x] write the main script to run the evaluation on the dataset and evaluators
+- [x] add cost and token traking on evaluation
+- [ ] update final answer prompt to generate very short, precise answer
+- [ ] (optional) write script and evaluators for pairwise evaluation on experiments
+- [x] (optional) create the datatset for evaluators (label result) to check of evaluators prompt works correct
+- [ ] create the dataset for tool class (tool name and args, expected outputs) and evaluate it also (tool regression check)
+- [x] improve the agent output to see the used tools, and trjactory
+- [x] finish course on the langsmith to unialize it during evaluaiton
+- [x] potentialy create own ReAct like agent, do not use prebuild
+- [x] create tool to get current date or paste it with prompt
+- [x] (optional) update the workflow to output more structured answer of some postprocessing (or invoke with structured, stream without)
 - [x] use githup assistant for pr code review
 - [x] fix review comments from copilot in pr
+- [ ] if the system become milti agent or multi workflow for each new agent or workflow its own dataset and evaluation
 
+- [x] the configuration way
+    - i need to have to variable of settings: app_settings, main_agent_settings
+    - app_settings not changes after the start of the application
+    - user with request can send the config that particaly change the configuration (change model provider, retrival method, etc)
+    - main_agent created on every call and consume default pyndatic settings 
+    merged with user passed config (dynamic changing and stateless)
+- [ ] add suport for agent to process next files formats: {'pptx', 'docx', 'py', 'txt', 'mp3', 'xlsx', 'png'}
+- [ ] fetch page tool can fetch to long page that blow the context window
+- [ ] add steps limit for agent
+
+
+- [ ] use prompt caching
+- [ ] use thinking model (also stream it thinking)
+- [ ] test system with different models
 - [ ] get back to ShortTerm memory implementation issue
 - [ ] after come back to chat endpoint to improve the error handling from workflow and its output
 - [ ] create postgress db with docker compose and add checkpoint to that to the agent (think how to visualize this also on web ui)
 - [ ] add long term memory support to agent (add fact, delete fact, retrieve/ search fact)
 - [ ] add promper short term memory support (some summarization after k messages)
+- [ ] add rag support (workflow) for agent to store some info
 - [ ] add meta learning (somehow auto update the prompt, tools description, etc., in reflection stage add some meaningful conclusion to long term memory on beter task completion)
 - [ ] long term memory possible category: user facts, task/ workflow insights, general insights of agent about itself and world
+- [ ] write unit test for the code-base
+- [ ] add units test and agent test to ci/cd
 
 - [ ] add guardrails to input and output of agent
 

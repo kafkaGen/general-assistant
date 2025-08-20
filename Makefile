@@ -16,6 +16,7 @@ help:
 	@echo "  make run-langgraph-studio  - Run the LangGraph Studio server"
 	@echo "  make run-docker-compose    - Run the Docker Compose services"
 	@echo "  make stop-docker-compose   - Stop the Docker Compose services"
+	@echo "  make run-evaluation        - Run the evaluation"
 
 setup-venv:
 	@echo "Setting up development environment..."
@@ -41,7 +42,7 @@ download-dataset:
 
 run-assistant:
 	@echo "Starting the assistant API server..."
-	uv run fastapi dev src/general_assistant/api/app.py
+	uv run fastapi dev src/api/app.py
 
 run-webui:
 	@echo "Starting the assistant Web UI server..."
