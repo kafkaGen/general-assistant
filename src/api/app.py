@@ -5,8 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes import chat, health
-from src.core.workflows import WorkflowFactory
+from src.core.workflows import GeneralAgent
 from src.settings.services import api_settings
+from src.utils.functions import get_agents_configuration
 from src.utils.logger import create_logger
 
 
@@ -23,10 +24,8 @@ async def lifespan(app: FastAPI):
     )
     app.state.logger = logger
 
-    # NOTE: in future i can create the agent on each request and pass custom
-    # user configuration to it, they will be cached, not created each time.
-    general_assistant = WorkflowFactory.create_general_assistant()
-    app.state.general_assistant = general_assistant
+    app.state.agents_configuration = get_agents_configuration()
+    app.state.general_agent = GeneralAgent()
 
     logger.info(f"Starting up {api_settings.api_name} {api_settings.api_version}...")
 

@@ -1,4 +1,3 @@
-from .general_assistant import GeneralAssistant
-from .workflow_factory import WorkflowFactory
+from .general_agent import GeneralAgent
 
-__all__ = ["GeneralAssistant", "WorkflowFactory"]
+__all__ = ["GeneralAgent"]

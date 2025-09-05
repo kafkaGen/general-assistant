@@ -434,6 +434,38 @@ wheels = [
 ]
 
 [[package]]
+name = "e2b"
+version = "2.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "httpcore" },
+    { name = "httpx" },
+    { name = "packaging" },
+    { name = "protobuf" },
+    { name = "python-dateutil" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/62/a3/a42d433040d995ed83fc40d4241ee2cffdb06c0e5494bef61546f41aa710/e2b-2.0.2.tar.gz", hash = "sha256:0b70ea4464331d306a34aab7020b6af36207de3c0f0594fb761f61ebe42545ba", size = 67797, upload-time = "2025-09-03T12:48:42.813Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/c1/270acb1f218e123e15ce37276eb872c72507aa156e4a40464a602cf248b0/e2b-2.0.2-py3-none-any.whl", hash = "sha256:e06bcea68520b1e66f7fe419fbd8bbf754df6603b1d00192c2a57e7c3c6fde52", size = 127958, upload-time = "2025-09-03T12:48:41.516Z" },
+]
+
+[[package]]
+name = "e2b-code-interpreter"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "e2b" },
+    { name = "httpx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/84/e94cb706d88ac3510748be9d0030fb0a896a25b43677903aff20213b3cc1/e2b_code_interpreter-2.0.0.tar.gz", hash = "sha256:19136916be8de60bfd0a678742501d1d0335442bb6e86405c7dd6f98059b73c4", size = 10029, upload-time = "2025-08-22T10:16:57.169Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5e/f1/135acbaffe4b2e63addecfc2a6c2ecf9ea3e5394aa2a9a829e3eb6f2098d/e2b_code_interpreter-2.0.0-py3-none-any.whl", hash = "sha256:273642d4dd78f09327fb1553fe4f7ddcf17892b78f98236e038d29985e42dca5", size = 12939, upload-time = "2025-08-22T10:16:55.698Z" },
+]
+
+[[package]]
 name = "email-validator"
 version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -580,6 +612,7 @@ dependencies = [
     { name = "chainlit" },
     { name = "datasets" },
     { name = "debugpy" },
+    { name = "e2b-code-interpreter" },
     { name = "fastapi", extra = ["standard"] },
     { name = "httpx" },
     { name = "huggingface-hub" },
@@ -608,6 +641,7 @@ requires-dist = [
     { name = "chainlit", specifier = ">=2.5.5" },
     { name = "datasets", specifier = ">=3.6.0" },
     { name = "debugpy", specifier = ">=1.8.14" },
+    { name = "e2b-code-interpreter", specifier = ">=2.0.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "huggingface-hub", specifier = ">=0.24.1" },

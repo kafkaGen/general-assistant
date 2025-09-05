@@ -1,0 +1,7 @@
+general_agent:
+  max_agent_steps: 15
+  agent_llm:
+    model: anthropic:claude-3-5-haiku-20241022
+    temperature: 0.3
+  reflection_llm:
+    model: anthropic:claude-3-5-haiku-20241022

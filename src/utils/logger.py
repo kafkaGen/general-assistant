@@ -10,12 +10,15 @@ def format_console_record(record):
         "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
         "<level>{level:<8}</level> | "
         "<cyan>{extra[name]}</cyan> | "
+        "<cyan>{function}:{line}</cyan> | "
         "<level>{message}</level>"
     )
     extras = [f"{v}" for k, v in record["extra"].items() if k != "name"]
     if extras:
         base += " | <magenta>" + " | ".join(extras) + "</magenta>"
     base += "\n"
+    if record.get("exception"):
+        base += "{exception}\n"
     return base
 
 
@@ -30,6 +33,9 @@ def format_file_record(record):
     extras = [f"{v}" for k, v in record["extra"].items() if k != "name"]
     if extras:
         base += " | " + " | ".join(extras)
+    base += "\n"
+    if record.get("exception"):
+        base += "{exception}\n"
     return base
 
 
@@ -45,7 +51,7 @@ def create_logger(
     Create a Loguru logger with console and file handlers
 
     Args:
-        logger_name: Name of the logger (used for directory and file naming)
+        logger_name: Name of the logger
         level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         rotation_size: File size before rotation (e.g., "512 MB", "100 MB")
         retention_count: Number of rotated files to keep
@@ -55,12 +61,11 @@ def create_logger(
         Configured Loguru logger instance
     """
     # Create log directory
-    log_dir = Path("logs") / logger_name
+    log_dir = Path("logs")
     log_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate datetime string for filename
-    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_filename = f"{logger_name}_{current_time}.log"
+    log_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
     log_filepath = log_dir / log_filename
 
     # Remove root handlers

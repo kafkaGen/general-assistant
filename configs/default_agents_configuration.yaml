@@ -1,0 +1,6 @@
+general_agent:
+  max_agent_steps: 15
+  agent_llm:
+    model: openai:gpt-4o-mini
+  reflection_llm:
+    model: openai:gpt-4o-mini

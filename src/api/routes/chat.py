@@ -5,9 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import AnyMessage
 
-from src.api.dependency import get_general_assistant, get_logger
+from src.api.dependency import get_agents_configuration, get_general_agent, get_logger
 from src.api.schemas.chat import ChatInvokeResponse, ChatRequest
-from src.core.workflows import GeneralAssistant
+from src.core.workflows import GeneralAgent
 from src.models.chat import ChatMessage
 from src.settings.services import api_settings
 from src.utils.logger import Logger
@@ -32,7 +32,8 @@ router = APIRouter(
 )
 async def chat_invoke(
     chat_request: ChatRequest,
-    general_assistant: GeneralAssistant = Depends(get_general_assistant),
+    agents_configuration: dict = Depends(get_agents_configuration),
+    general_agent: GeneralAgent = Depends(get_general_agent),
     logger: Logger = Depends(get_logger),
 ) -> ChatInvokeResponse:
     """
@@ -50,7 +51,10 @@ async def chat_invoke(
 
     try:
         messages = chat_request.to_langchain_messages()
-        response = await general_assistant.ainvoke(messages=messages)
+        response = await general_agent.ainvoke(
+            messages=messages,
+            config=agents_configuration,
+        )
         response_messages = response["output_messages"]
 
         return ChatInvokeResponse.from_langchain_messages(response_messages)
@@ -58,10 +62,9 @@ async def chat_invoke(
     except Exception as e:
         error_type = type(e).__name__
         error_details = str(e)
-        logger.error(
+        logger.exception(
             f"Unexpected error processing chat invoke: {error_details}",
             error_type=error_type,
-            exc_info=True,
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -79,7 +82,8 @@ async def chat_invoke(
 @router.post("/chat_stream")
 async def chat_stream(
     chat_request: ChatRequest,
-    general_assistant: GeneralAssistant = Depends(get_general_assistant),
+    agents_configuration: dict = Depends(get_agents_configuration),
+    general_agent: GeneralAgent = Depends(get_general_agent),
     logger: Logger = Depends(get_logger),
 ) -> StreamingResponse:
     """
@@ -93,17 +97,19 @@ async def chat_stream(
         messages: list[AnyMessage],
     ) -> AsyncGenerator[str, None]:
         try:
-            async for message in general_assistant.astream(messages=messages):
+            async for message in general_agent.astream(
+                messages=messages,
+                config=agents_configuration,
+            ):
                 msg = ChatMessage.from_langchain_message(message)
                 yield f"{msg.model_dump_json()}\n"
 
         except Exception as e:
             error_type = type(e).__name__
             error_details = str(e)
-            logger.error(
+            logger.exception(
                 f"Unexpected error processing chat stream: {error_details}",
                 error_type=error_type,
-                exc_info=True,
             )
             error_dict = {
                 "message": (
@@ -131,10 +137,9 @@ async def chat_stream(
     except Exception as e:
         error_type = type(e).__name__
         error_details = str(e)
-        logger.error(
+        logger.exception(
             f"Unexpected error setting up streaming chat: {error_details}",
             error_type=error_type,
-            exc_info=True,
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

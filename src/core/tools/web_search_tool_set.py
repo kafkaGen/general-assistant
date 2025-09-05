@@ -3,16 +3,11 @@ import json
 from langchain_core.tools import StructuredTool
 from tavily import AsyncTavilyClient
 
-from src.settings.tools import WebSearchToolSettings
 
-
-class WebSearchTool:
+class WebSearchToolSet:
     def __init__(
         self,
-        settings: WebSearchToolSettings,
     ) -> None:
-        self.settings = settings
-
         self._tavily_client = AsyncTavilyClient()
 
     async def search_web(self, query: str) -> str:
@@ -20,26 +15,17 @@ class WebSearchTool:
         Search the internet for the most recent and relevant public information
         on provided topic.
 
-        Args:
-            query (str): A natural language question or topic for search engine.
-                         Example: "EU elections outcome", "latest LLM breakthroughs"
-
-        Returns:
-            str: A JSON string with:
-                - results (List[dict]): Each entry includes:
-                    - title (str)
-                    - url (str): URL of the search result
-                    - content (str): short summary/snippet
-                    - metadata (dict): metadata of the search result
-
         Usage Note:
             Use this tool when you need to find fresh information not present in the
             assistant's memory to answer the user's question.
+
+        Args:
+            query (str): A natural language question or topic for search engine.
         """
         response = await self._tavily_client.search(
             query=query,
             search_depth="advanced",
-            max_results=self.settings.max_results,
+            max_results=3,
         )
         result_str = json.dumps(response["results"], indent=4)
 
@@ -77,9 +63,8 @@ class WebSearchTool:
         return [
             StructuredTool.from_function(
                 func=self.search_web,
-                name=self.search_web.__name__,
-                description=str(self.search_web.__doc__),
                 coroutine=self.search_web,
+                parse_docstring=True,
             ),
             # StructuredTool.from_function(
             #     func=self.fetch_webpage_text,

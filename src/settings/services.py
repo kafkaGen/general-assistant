@@ -6,7 +6,7 @@ class ApiSettings(BaseSettings):
     api_name: str = Field(
         "General Assistant API", description="The name of the application."
     )
-    api_version: str = Field("v0.2.0", description="The version of the application.")
+    api_version: str = Field("v0.3.0", description="The version of the application.")
     api_description: str = Field(
         "API for the General Assistant application",
         description="A brief description of the application.",
@@ -32,11 +32,11 @@ class WebUISettings(BaseSettings):
         description="The base URL of the assistant service.",
     )
     assistant_chat_invoke_endpoint: str = Field(
-        "/v0.2.0/chat/chat_invoke",
+        "/v0.3.0/chat/chat_invoke",
         description="The chat invoke endpoint path.",
     )
     assistant_chat_stream_endpoint: str = Field(
-        "/v0.2.0/chat/chat_stream",
+        "/v0.3.0/chat/chat_stream",
         description="The chat stream endpoint path.",
     )
 

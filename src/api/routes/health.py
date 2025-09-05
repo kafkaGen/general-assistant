@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.dependency import get_logger
 from src.api.schemas.health import HealthCheckResponse
-from src.core.workflows import WorkflowFactory
+from src.core.workflows import GeneralAgent
 from src.settings.services import api_settings
 from src.utils.logger import Logger
 
@@ -45,7 +45,7 @@ async def get_api_health(
     # Check 1: GeneralAssistant instantiation
     try:
         # Attempt to create an instance of the workflow.
-        _ = WorkflowFactory.create_general_assistant()
+        _ = GeneralAgent()
         component_checks["workflow_initialization"] = {"status": "healthy"}
     except Exception as e:
         error_type = type(e).__name__
@@ -56,7 +56,7 @@ async def get_api_health(
         }
         overall_healthy = False
 
-        logger.error(
+        logger.exception(
             f"Health Check Error: {error_details}",
             error_type=error_type,
             exc_info=True,
